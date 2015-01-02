@@ -11,7 +11,14 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', ['uses' => 'IngredientController@getIndex']);
+
+Route::post('ingredient-search', [
+	'uses' => 'IngredientController@postSearch'
+]);
+Route::post('ingredient-detail', [
+	'uses' => 'IngredientController@postDetails'
+]);
+Route::get('ingredient-detail', [
+	'uses' => 'IngredientController@getDetails'
+]);

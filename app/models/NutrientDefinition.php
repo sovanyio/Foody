@@ -8,4 +8,13 @@ class NutrientDefinition extends Eloquent {
 	 */
 	protected $table = 'nutr_def';
 
+	/**
+	 * Primary Key
+	 * @var string
+	 */
+	protected $primaryKey = 'nutr_no';
+
+	public function getTable() {
+		return $this->table;
+	}
 }

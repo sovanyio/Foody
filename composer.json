@@ -6,7 +6,9 @@
 	"type": "project",
 	"require": {
 		"laravel/framework": "4.2.*",
-		"maatwebsite/excel": "~1.2.1"
+		"maatwebsite/excel": "~1.2.1",
+	  	"buonzz/laravel-twitter-bootstrap": "1.*",
+	  	"brianreavis/selectize.js": "0.11.*"
 	},
 	"autoload": {
 		"classmap": [

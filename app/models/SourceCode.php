@@ -8,4 +8,13 @@ class SourceCode extends Eloquent {
 	 */
 	protected $table = 'src_cd';
 
+	/**
+	 * Primary Key
+	 * @var string
+	 */
+	protected $primaryKey = 'src_cd';
+
+	public function getTable() {
+		return $this->table;
+	}
 }

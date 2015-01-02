@@ -8,4 +8,10 @@ class DataSource extends Eloquent {
 	 */
 	protected $table = 'data_src';
 
+	/**
+	 * Primary Key
+	 * @var string
+	 */
+	protected $primaryKey = 'datasrc_id';
+
 }
