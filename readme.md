@@ -1,5 +1,5 @@
 # Foody
-===
+----
 
 This is an experiment project meant to make nutritional information more accessible to a home cook. Features intended for the future include:
 
