@@ -12,7 +12,7 @@
             <br />
             {{--{{ Form::submit('Search', ['class' => 'btn btn-primary btn-block', 'id' => 'search']) }}--}}
             <div id="detail">
-                <?php echo $detail ?>
+                <?php echo isset($detail) ? $detail : ''?>
             </div>
         </div>
     </div>

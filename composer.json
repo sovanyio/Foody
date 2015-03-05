@@ -7,8 +7,7 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"maatwebsite/excel": "~1.2.1",
-	  	"buonzz/laravel-twitter-bootstrap": "1.*",
-	  	"brianreavis/selectize.js": "0.11.*"
+	  	"buonzz/laravel-twitter-bootstrap": "1.*"
 	},
 	"autoload": {
 		"classmap": [
@@ -17,7 +16,6 @@
 			"app/models",
 			"app/database/migrations",
 			"app/database/seeds",
-			"app/lib",
 			"app/tests/TestCase.php"
 		]
 	},
