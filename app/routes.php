@@ -11,7 +11,25 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', [
+    'as' => 'home',
+    function() {
+        return View::make('hello')->withTitle('Home');
+    }
+]);
+
+Route::post('ingredient-search', [
+	'uses' => 'IngredientController@postSearch'
+]);
+Route::post('ingredient-detail', [
+	'uses' => 'IngredientController@postDetails'
+]);
+Route::get('ingredient-detail', [
+    'as' => 'ingredient-detail',
+	'uses' => 'IngredientController@getDetails'
+]);
+
+Route::get('recipe', [
+    'as' => 'recipe',
+    'uses' => 'RecipeController@getParser'
+]);

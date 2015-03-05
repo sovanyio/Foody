@@ -7,4 +7,10 @@ class DataDerivationCodeDescription extends Eloquent {
 	 * @var string
 	 */
 	protected $table = 'deriv_cd';
+
+	/**
+	 * Primary Key
+	 * @var string
+	 */
+	protected $primaryKey = 'deriv_cd';
 }

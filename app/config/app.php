@@ -123,6 +123,8 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
 		'Maatwebsite\Excel\ExcelServiceProvider',
+		'Buonzz\LaravelTwitterBootstrap\LaravelTwitterBootstrapServiceProvider',
+		'Buonzz\LaravelJquery\LaravelJqueryServiceProvider',
 
 	),
 

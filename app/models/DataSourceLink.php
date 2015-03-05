@@ -7,5 +7,4 @@ class DataSourceLink extends Eloquent {
 	 * @var string
 	 */
 	protected $table = 'datasrcln';
-
 }

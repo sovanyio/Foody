@@ -8,4 +8,10 @@ class LanguaLFactorDescription extends Eloquent {
 	 */
 	protected $table = 'langdesc';
 
+	/**
+	 * Primary Key
+	 * @var string
+	 */
+	protected $primaryKey = 'factor_code';
+
 }
