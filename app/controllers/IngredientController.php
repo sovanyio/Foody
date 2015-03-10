@@ -15,7 +15,7 @@ class IngredientController extends BaseController {
 	|
 	*/
 
-	public function getIndex($data = null)
+	public function getIndex($passedData = null)
 	{
 		$groups  = FoodGroupDescription::all();
 
@@ -24,20 +24,25 @@ class IngredientController extends BaseController {
 			$opts[$group->fdgrp_desc] = [];
 		}
 
-		if($data) {
-			return View::make('ingredients.search', [
-				'title'     => 'Ingredient Search',
-				'optgroups' => $opts
-			])->nest('detail', 'ingredients.details', $data);
+        $data = [
+            'title' => 'Ingredient Search',
+            'optgroups' => $opts
+        ];
+
+		if($passedData) {
+            $data['ingredient'] = $passedData['one']['ingredient'] ?: null;
+            $data['compare'] = $passedData['two']['ingredient'] ?: null;
+
+			return View::make('ingredients.search', $data)
+                ->nest('detail', 'ingredients.details', $passedData['one'] ?: [])
+                ->nest('compareDetails', 'ingredients.details', $passedData['two'] ?: []);
 		}
-		return View::make('ingredients.search', [
-			'title'     => 'Ingredient Search',
-			'optgroups' => $opts
-		]);
+		return View::make('ingredients.search', $data);
 	}
 
 	public function postDetails($return = false) {
-		$ingredient = FoodDescription::where('ndb_no', '=', Input::get('ingredient'))->first();
+		$ingredient = FoodDescription::where('ndb_no', '=', $return ?: Input::get('ingredient'))->first();
+
 		$data = [
 			'ingredient' => $ingredient,
 			'details' => $ingredient ? NutrientData::retrieveByFood($ingredient) : null,
@@ -52,8 +57,16 @@ class IngredientController extends BaseController {
 	}
 
 	public function getDetails() {
+        $index = count(Input::all());
+
+        if (!$index) {
+            return $this->getIndex();
+        }
 		return $this->getIndex(
-			$this->postDetails(true)
+			[
+                'one' => $this->postDetails(Input::get('ingredient', false)),
+                'two' => $this->postDetails(Input::get('compare', false))
+            ]
 		);
 	}
 

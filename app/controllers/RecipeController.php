@@ -15,25 +15,49 @@ class RecipeController extends BaseController {
 	|
 	*/
 
-	public function getParser($data = null)
+	public function getParser()
 	{
-		$groups  = FoodGroupDescription::all();
-
-		$opts = [];
-		foreach($groups as $key => $group) {
-			$opts[$group->fdgrp_desc] = [];
-		}
-
-		if($data) {
-			return View::make('ingredients.search', [
-				'title'     => 'Ingredient Search',
-				'optgroups' => $opts
-			])->nest('detail', 'ingredients.details', $data);
-		}
-		return View::make('ingredients.search', [
-			'title'     => 'Ingredient Search',
-			'optgroups' => $opts
+		return View::make('recipe.parser', [
+			'title'     => 'Recipe Estimator',
 		]);
 	}
+
+    public function postRecipe()
+    {
+        $ingredients = Input::get('ingredients');
+        $out = [];
+
+        foreach($ingredients as $ingredient) {
+            if (!array_key_exists('ingredient', $ingredient)) continue;
+            $out[$ingredient['ingredient']] = FoodDescription::searchAutocomplete($ingredient['ingredient']);
+        }
+
+//        foreach($ingredients as $ingredient) {
+//            if (!array_key_exists('ingredient', $ingredient)) continue;
+//
+//            $words = $originalWords = preg_split('/\s/', $ingredient['ingredient']);
+//            $result = null;
+//
+//            // Drop the words LtR to try to find the ingredient
+//            while(count($words) > 1 && !$result) {
+//                array_shift($words);
+//
+//                $result = FoodDescription::searchAutocomplete(join(' ', $words), $first = true);
+//            }
+//
+//            if(!$result) {
+//                // Drop the words RtL...
+//                while(count($originalWords) > 1 && !$result) {
+//                    array_pop($originalWords);
+//
+//                    $result = FoodDescription::searchAutocomplete(join(' ', $words), $first = true);
+//                }
+//            }
+//
+//            $out[] = $result ?: null;
+//        }
+
+        return $out;
+    }
 
 }

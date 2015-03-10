@@ -14,7 +14,7 @@
 Route::get('/', [
     'as' => 'home',
     function() {
-        return View::make('hello')->withTitle('Home');
+        return View::make('hello')->withTitle('');
     }
 ]);
 
@@ -32,4 +32,8 @@ Route::get('ingredient-detail', [
 Route::get('recipe', [
     'as' => 'recipe',
     'uses' => 'RecipeController@getParser'
+]);
+Route::post('recipe', [
+    'as' => 'recipe-submit',
+    'uses' => 'RecipeController@postRecipe'
 ]);

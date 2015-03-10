@@ -5,20 +5,30 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-6">
             <h2 {{ HTML::attributes(['class' => 'form-search-ingredient-heading']) }}>Ingredient Search</h2>
             {{ Form::label('ingredient', 'Name of Ingredient', ['class' => 'sr-only']) }}
-            {{ Form::select('ingredient', $optgroups, ['class' => 'form-control typeahead', 'placeholder' => 'Name of Ingredient', 'required' => 'true', 'autofocus' => 'true', 'autocomplete' => 'off']) }}
+            {{ Form::select('ingredient', $optgroups, ['class' => 'form-control typeahead', 'placeholder' => 'Name of Ingredient', 'autofocus' => 'true', 'autocomplete' => 'off']) }}
             <br />
             {{--{{ Form::submit('Search', ['class' => 'btn btn-primary btn-block', 'id' => 'search']) }}--}}
-            <div id="detail">
+            <div class="detail">
                 <?php echo isset($detail) ? $detail : ''?>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2 {{ HTML::attributes(['class' => 'form-search-ingredient-heading']) }}>Compare</h2>
+            {{ Form::label('compare', 'Name of Ingredient', ['class' => 'sr-only']) }}
+            {{ Form::select('compare', $optgroups, ['class' => 'form-control typeahead', 'placeholder' => 'Name of Ingredient', 'autofocus' => 'false', 'autocomplete' => 'off']) }}
+            <br />
+            {{--{{ Form::submit('Search', ['class' => 'btn btn-primary btn-block', 'id' => 'search']) }}--}}
+            <div class="detail">
+                <?php echo isset($compareDetails) ? $compareDetails: ''?>
             </div>
         </div>
     </div>
 <script type="text/javascript">
     $(function() {
-        $('#ingredient').selectize({
+        $('#ingredient,#compare').selectize({
             valueField: 'value',
             labelField: 'label',
             searchField: 'label',
@@ -50,14 +60,20 @@
                 });
             }
         }).change(function() {
-            getDetails();
+            getDetails(this);
         });
 
-        var getDetails = function() {
-            var id = $('#ingredient').val();
-            if(!id.length) noResult();
+        var getDetails = function(element) {
+            var $el = $(element),
+                detail = $el.parents('.col-md-6').children('.detail'),
+                id = $el.val();
 
-            $('#detail').html();
+            if(!id.length) {
+                detail.html('<h2>No Results</h2>')
+                return;
+            }
+
+            detail.html();
             NProgress.start();
 
             $.ajax({
@@ -67,21 +83,29 @@
                     ingredient: id
                 },
                 error: function() {
-                    noResult();
+                    detail.html('<h2>No Results</h2>')
                 },
                 success: function(res) {
-                    $('#detail').html(res);
-                    history.pushState(null, null, '{{ URL::action('IngredientController@getDetails') }}?ingredient='+id);
+                    var base = '{{ URL::action('IngredientController@getDetails') }}',
+                        ingredient = $('#ingredient').val(),
+                        compare = $('#compare').val();
+
+                    detail.html(res);
+
+                    if (ingredient) {
+                        base = base + '?ingredient=' + ingredient;
+                    }
+                    if (compare) {
+                        base = base + (base.match(/\?/) === null ? '?' : '&') + 'compare=' + compare;
+                    }
+
+                    history.pushState(null, null, base);
                 },
                 complete: function() {
                     NProgress.done();
                 }
             });
         };
-
-        var noResult = function() {
-            $('#detail').html('<h2>No Results</h2>')
-        }
     });
 </script>
 @stop

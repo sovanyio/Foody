@@ -2,6 +2,9 @@
   "name": "RecipeManager",
   "dependencies": {
     "selectize": "~0.11.2",
-    "nprogress": "~0.1.6"
+    "nprogress": "~0.1.6",
+    "bower": "*",
+    "install": "~1.0.4",
+    "fold-to-ascii": "~2.0.1"
   }
 }
