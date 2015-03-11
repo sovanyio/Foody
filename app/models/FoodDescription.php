@@ -25,7 +25,7 @@ class FoodDescription extends Eloquent {
             ->where(function($where) use($query) {
                 $parts = preg_split('/\s+/', $query);
                 foreach($parts as $part) {
-                    $where->where('long_desc', 'ilike', '%'.$part.'%');
+                    $where->where('long_desc', 'REGEXP', $part);
                 }
             })
             ->orderBy( $des->table.'.fdgrp_cd');
