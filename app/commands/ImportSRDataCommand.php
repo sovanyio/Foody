@@ -95,42 +95,27 @@ class ImportSRDataCommand extends Command {
 		foreach($this->order as $file => $table) {
 			$this->importFile($file, $table);
 		}
+        $this->info('Import done! :)');
 	}
 
 	protected function importFile($file, $table) {
 		$fullFile = $this->directory.$file.'.txt';
+        $tempFile = '/tmp/'.$file.'.txt';
 
 		// Remove leading/trailing spaces from the file
-		exec("sed 's/^[ \t]*//;s/[ \t]*$//' {$fullFile} > {$fullFile}_parsed");
+        // Change weird format to CSV
+		exec("sed 's/^[ \t]*//;s/[ \t]*$//;s/\"/\"\"/g;s/\^/,/g;s/~/\"/g' {$fullFile} > {$tempFile}");
 
-		DB::connection('pgsqlSU')->statement("
-			COPY {$table}
-			FROM '{$fullFile}_parsed'
-			WITH CSV 
-				DELIMITER '^'
-				QUOTE '~'
-		");
-		unlink($fullFile.'_parsed');
-		$this->info('Imported '.$file);
-
-		// DB::transaction(function() use ($table, $fullFile) {
-			// Excel::filter('chunk')
-			// ->load($fullFile)
-			// ->chunk(500, function($results) use ($table) {
-			// 	$temp = [];
-			// 	foreach($results as $result) {
-			// 		$temp[] = implode("\t", $result->toArray());
-			// 	}
-
-			// 	$squashed = implode("\n", $temp);
-			// 	// PostgreSQL specific
-			// 	DB::raw("
-			// 		COPY {$table}
-			// 		SELECT
-			// 		{$squashed}
-			// 	");
-			// });
-		// });
+        // Import standardized file
+        $output = []; $return = 0;
+        //echo -e '.separator "@"\n.import output log_dump' | sqlite log.db
+        //exec("sqlite3 ".Config::get('database.connections.sqlite.database')." '.import {$tempFile} {$table}'", $output, $return);
+        exec("echo '.separator ,\n.import {$tempFile} {$table}' | sqlite3 ".Config::get('database.connections.sqlite.database'), $output, $return);
+        if (!$return && !$output) {
+            $this->info($file.' imported successfully!');
+        } else {
+            throw new UnexpectedValueException('Import failed');
+        }
 	}
 
 	/**

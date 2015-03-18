@@ -29,7 +29,7 @@ class RecipeController extends BaseController {
 
         foreach($ingredients as $ingredient) {
             if (!array_key_exists('ingredient', $ingredient)) continue;
-            $out[$ingredient['ingredient']] = FoodDescription::searchAutocomplete($ingredient['ingredient']);
+            $out[$ingredient['ingredient']] = FoodDescription::searchIngredients($ingredient['ingredient']);
         }
 
 //        foreach($ingredients as $ingredient) {
