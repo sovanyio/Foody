@@ -50,6 +50,9 @@ class FoodDescription extends Eloquent {
         $grp = new FoodGroupDescription();
         $pri = new GroupPriority();
 
+        // Enable sqlite regex...
+        DB::connection()->getPdo()->sqliteCreateFunction("REGEXP", "preg_match", 2);
+
         $dbQuery = DB::table($des->table)
             ->join($grp->getTable(), $des->table.'.fdgrp_cd', '=', $grp->getTable().'.fdgrp_cd')
             ->join($pri->getTable(), $grp->getTable().'.fdgrp_cd', '=', $pri->getTable().'.fdgrp_cd')
@@ -57,7 +60,7 @@ class FoodDescription extends Eloquent {
             ->where(function($where) use($query) {
                 $parts = preg_split('/\s+/', $query);
                 foreach($parts as $k => $part) {
-                    $where->whereRaw("long_desc like '%{$part}%'");
+                    $where->whereRaw("long_desc regexp '/[^\W+]?{$part}[$\W+]?/'");
                 }
             })
             ->orderBy('priority');

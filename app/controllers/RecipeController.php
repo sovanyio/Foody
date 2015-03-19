@@ -28,7 +28,7 @@ class RecipeController extends BaseController {
         $out = [];
 
         foreach($ingredients as $ingredient) {
-            if (!array_key_exists('ingredient', $ingredient)) continue;
+            if (is_array($ingredient) && !array_key_exists('ingredient', $ingredient)) continue;
             $out[$ingredient['ingredient']] = FoodDescription::searchIngredients($ingredient['ingredient']);
         }
 
