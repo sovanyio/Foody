@@ -7,7 +7,7 @@
     <div class="form-group">
         <div class="row">
             <div class="col-md-10">
-                {{Form::label('id', 'Recipe Nutrition Estimator', ['for' => 'recipe'])}}
+                {{Form::label('id', 'Recipe Nutrition Estimator - Proof of Concept', ['for' => 'recipe'])}}
             </div>
             <div class="col-md-2">
                 <a href="#" id="example" class="btn btn-danger btn-xs padding-left" style="float: right">Example Recipe</a>
