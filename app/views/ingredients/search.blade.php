@@ -15,7 +15,7 @@
                 <?php echo isset($detail) ? $detail : ''?>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 hidden-xs hidden-sm">
             <h2 {{ HTML::attributes(['class' => 'form-search-ingredient-heading']) }}>Compare</h2>
             {{ Form::label('compare', 'Name of Ingredient', ['class' => 'sr-only']) }}
             {{ Form::select('compare', $optgroups, ['class' => 'form-control typeahead', 'placeholder' => 'Name of Ingredient', 'autofocus' => 'false', 'autocomplete' => 'off']) }}

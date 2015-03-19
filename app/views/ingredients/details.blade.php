@@ -4,7 +4,7 @@
     <thead>
         <tr>
             <th>Nutrient</th>
-            <th class="text-right hidden-xs">100g</th>
+            <th class="text-right hidden-xs hidden-sm">100g</th>
             @foreach($servings as $serving)
                 <th class="text-right">{{{ $serving->amount.' '.$serving->msre_desc }}}</th>
             @endforeach
@@ -14,7 +14,7 @@
     @foreach ($details as $detail)
         <tr>
             <td><abbr title="{{{ $detail->help_text }}}">{{{ $detail->name  }}}</abbr></td>
-            <td class="text-right hidden-xs">{{{ $detail->value.' '.$detail->units  }}}</td>
+            <td class="text-right hidden-xs hidden-sm">{{{ $detail->value.' '.$detail->units  }}}</td>
             @foreach($servings as $serving)
                 <td class="text-right">{{{ number_format($serving->gm_wgt / 100 * $detail->value, 1).' '.$detail->units }}}</td>
             @endforeach
