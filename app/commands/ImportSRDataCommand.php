@@ -116,6 +116,8 @@ class ImportSRDataCommand extends Command {
         } else {
             throw new UnexpectedValueException('Import failed');
         }
+
+        exec("rm {$tempFile}");
 	}
 
 	/**
