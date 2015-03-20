@@ -19,14 +19,16 @@ Route::get('/', [
 ]);
 
 Route::post('ingredient-search', [
+    'as' => 'ingredientSearch',
 	'uses' => 'IngredientController@postSearch'
-]);
-Route::post('ingredient-detail', [
-	'uses' => 'IngredientController@postDetails'
 ]);
 Route::get('ingredient-detail', [
     'as' => 'ingredient-detail',
-	'uses' => 'IngredientController@getDetails'
+	'uses' => 'IngredientController@getIndex'
+]);
+Route::post('ingredient-detail', [
+    'as' => 'ingredientDetail',
+    'uses' => 'IngredientController@getDetails'
 ]);
 
 Route::get('recipe', [

@@ -27,7 +27,11 @@
         </div>
     </div>
 <script type="text/javascript">
+    var ingredientVal,
+        compareVal;
+
     $(function() {
+        // Run search on the selects on user input
         $('#ingredient,#compare').selectize({
             valueField: 'value',
             labelField: 'label',
@@ -36,14 +40,38 @@
             optgroupLabelField: 'optgroup',
             selectOnTab: true,
             loadThrottle: 500,
+            preload: true,
             load: function(query, callback) {
-                if (!query.length) return callback();
+                // Run searches based on the URL
+                // This is for sharing your lookup...
+                var params = window.location.search.replace(/\?/, '');
+                if (!query.length && params.length) {
+                    params = params.split('&');
+                    for(var i = 0; i < params.length; i++) {
+                        var parts = params[i].split('=');
+                        // Set value and trigger load
+                        if (this.$input.attr('id') != parts[0]) continue;
+
+                        switch(parts[0]) {
+                            case 'ingredient':
+                                ingredientVal = parts[1];
+                                break;
+                            case 'compare':
+                                compareVal = parts[1];
+                                break;
+                        }
+                        getDetails(document.getElementById(parts[0]), parts[1]);
+                    }
+                    return callback();
+                } else if (!query.length) {
+                    return callback();
+                }
 
                 NProgress.start();
 
                 $.ajax({
-                    url: '{{ URL::action('IngredientController@postSearch') }}',
-                    type: 'post',
+                    url: '{{ URL::route('ingredientSearch') }}',
+                    method: 'post',
                     data: {
                         _token: $('input[name=_token]').val(),
                         ingredient: query
@@ -60,24 +88,26 @@
                 });
             }
         }).change(function() {
+            // Get details on select
             getDetails(this);
         });
 
-        var getDetails = function(element) {
+        var getDetails = function(element, override) {
             var $el = $(element),
+                override = override || false,
                 detail = $el.parents('.col-md-6').children('.detail'),
-                id = $el.val();
+                id = override || $el.val();
 
             if(!id.length) {
-                detail.html('<h2>No Results</h2>')
+                detail.html('<h2>No Results</h2>');
                 return;
             }
 
-            detail.html();
+            detail.html(null);
             NProgress.start();
 
             $.ajax({
-                url: '{{ URL::action('IngredientController@postDetails') }}',
+                url: '{{ URL::route('ingredientDetail') }}',
                 method: 'post',
                 data: {
                     ingredient: id
@@ -86,20 +116,26 @@
                     detail.html('<h2>No Results</h2>')
                 },
                 success: function(res) {
-                    var base = '{{ URL::action('IngredientController@getDetails') }}',
-                        ingredient = $('#ingredient').val(),
-                        compare = $('#compare').val();
-
                     detail.html(res);
 
-                    if (ingredient) {
-                        base = base + '?ingredient=' + ingredient;
-                    }
-                    if (compare) {
-                        base = base + (base.match(/\?/) === null ? '?' : '&') + 'compare=' + compare;
-                    }
+                    if (!override) {
+                        var base = '{{ URL::current() }}',
+                            ingredientId = $('#ingredient').val() || ingredientVal,
+                            compareId = $('#compare').val() || compareVal;
 
-                    history.pushState(null, null, base);
+                        if (ingredientId) {
+                            base = base + '?ingredient=' + ingredientId;
+                        }
+                        if (compareId) {
+                            base = base + (base.match(/\?/) === null ? '?' : '&') + 'compare=' + compareId;
+                        }
+
+                        history.pushState(null, null, base);
+
+//                        // Clear these values so URL building works normally
+//                        ingredientVal = null;
+//                        compareVal = null;
+                    }
                 },
                 complete: function() {
                     NProgress.done();

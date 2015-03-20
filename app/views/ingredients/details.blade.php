@@ -1,6 +1,6 @@
 @if(isset($ingredient))
 <table class="table table-striped table-condensed table-hover table-responsive">
-    <h3>{{{ $ingredient->long_desc }}}</h3>
+    <h3 class="ingredient-name">{{{ $ingredient->long_desc }}}</h3>
     <thead>
         <tr>
             <th>Nutrient</th>
