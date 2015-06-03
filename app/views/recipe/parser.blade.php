@@ -4,6 +4,18 @@
     <script src="/develop/ingreedy.js"></script>
 @stop
 @section('content')
+    <style type="text/css">
+        .row {
+            display: flex;
+            align-items: center;
+        }
+        .row div {
+            -webkit-transition: width 0.3s ease, margin 0.3s ease;
+            -moz-transition: width 0.3s ease, margin 0.3s ease;
+            -o-transition: width 0.3s ease, margin 0.3s ease;
+            transition: width 0.3s ease, margin 0.3s ease;
+        }
+    </style>
     <div class="form-group">
         <div class="row">
             <div class="col-md-10">
@@ -14,8 +26,13 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div id="pastebin-container" class="col-md-12">
                 {{Form::textarea('recipe', null, ['class' => 'form-control', 'placeholder' => 'Paste ingredient list here'])}}
+            </div>
+            <div id="pastebin-arrow" class="col-md-0" style="display: none">
+                <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+            </div>
+            <div id="recipe-selects" class="col-md-0">
             </div>
         </div>
     </div>
@@ -54,6 +71,17 @@ Ice\n\
                         timer = setTimeout(function() {
                             handler(input);
                         }, 750);
+                    }).focus(function() {
+                        $('#pastebin-container')
+                                .addClass('col-md-12')
+                                .removeClass('col-md-6');
+                        $('#pastebin-arrow')
+                                .addClass('col-md-0')
+                                .removeClass('col-md-1')
+                                .hide();
+                        $('#recipe-selects')
+                                .addClass('col-md-0')
+                                .removeClass('col-md-5');
                     });
 
             var handler = function(el) {
@@ -85,9 +113,21 @@ Ice\n\
                         },
                         success: function(res) {
                             var $detail = $('#ingreedy-results'),
-                                    $list = $('#panel-list');
+                                $list = $('#panel-list');
                             // Save data
                             data = res;
+
+                            // Animate pastebin
+                            $('#pastebin-container')
+                                    .addClass('col-md-6')
+                                    .removeClass('col-md-12');
+                            $('#pastebin-arrow')
+                                    .addClass('col-md-1')
+                                    .removeClass('col-md-0')
+                                    .show();
+                            $('#recipe-selects')
+                                    .addClass('col-md-5')
+                                    .removeClass('col-md-0');
 
                             // Change title of result container
                             $detail.children('.panel-heading').html('Ingredients found');

@@ -50,20 +50,20 @@ class FoodDescription extends Eloquent {
         $grp = new FoodGroupDescription();
         $pri = new GroupPriority();
 
-        // Enable sqlite regex...
-        DB::connection()->getPdo()->sqliteCreateFunction("REGEXP", "preg_match", 2);
+        $query = preg_replace('/\s+/', ' | ', preg_replace("/'/", "''", $query));
 
         $dbQuery = DB::table($des->table)
             ->join($grp->getTable(), $des->table.'.fdgrp_cd', '=', $grp->getTable().'.fdgrp_cd')
             ->join($pri->getTable(), $grp->getTable().'.fdgrp_cd', '=', $pri->getTable().'.fdgrp_cd')
-            ->select('long_desc as label', 'ndb_no as value', 'fdgrp_desc as optgroup')
-            ->where(function($where) use($query) {
-                $parts = preg_split('/\s+/', $query);
-                foreach($parts as $k => $part) {
-                    $where->whereRaw("long_desc regexp '/[^\W+]?{$part}[$\W+]?/'");
-                }
-            })
-            ->orderBy('priority');
+            ->selectRaw(
+                'long_desc as label, '.
+                'ndb_no as value, '.
+                'fdgrp_desc as optgroup, '.
+                "ts_rank(to_tsvector(long_desc), to_tsquery('{$query}')) as rank"
+            )
+            ->whereRaw("to_tsvector(long_desc) @@ to_tsquery('{$query}')")
+            ->orderBy('rank', 'desc')
+            ->limit(20);
 
         return $first ? $dbQuery->first() : $dbQuery->get();
 	}

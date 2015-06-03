@@ -22,7 +22,7 @@ class ImportSRDataCommand extends Command {
 
 	/**
 	 * The list of files to import, in the correct import order.
-	 * 
+	 *
 	 * @var array [ {filename} ] = {tablename}
 	 */
 	protected $order = [
@@ -102,22 +102,17 @@ class ImportSRDataCommand extends Command {
 		$fullFile = $this->directory.$file.'.txt';
         $tempFile = '/tmp/'.$file.'.txt';
 
-		// Remove leading/trailing spaces from the file
-        // Change weird format to CSV
-		exec("sed 's/^[ \t]*//;s/[ \t]*$//;s/\"/\"\"/g;s/\^/,/g;s/~/\"/g' {$fullFile} > {$tempFile}");
+        exec("sed 's/^[ \t]*//;s/[ \t]*$//' {$fullFile} > {$fullFile}_parsed");
 
-        // Import standardized file
-        $output = []; $return = 0;
-        //echo -e '.separator "@"\n.import output log_dump' | sqlite log.db
-        //exec("sqlite3 ".Config::get('database.connections.sqlite.database')." '.import {$tempFile} {$table}'", $output, $return);
-        exec("echo '.separator ,\n.import {$tempFile} {$table}' | sqlite3 ".Config::get('database.connections.sqlite.database'), $output, $return);
-        if (!$return && !$output) {
-            $this->info($file.' imported successfully!');
-        } else {
-            throw new UnexpectedValueException('Import failed');
-        }
-
-        exec("rm {$tempFile}");
+        DB::connection('pgsqlSU')->statement("
+			COPY {$table}
+			FROM '{$fullFile}_parsed'
+			WITH CSV
+				DELIMITER '^'
+				QUOTE '~'
+		");
+        unlink($fullFile.'_parsed');
+        $this->info('Imported '.$file);
 	}
 
 	/**
